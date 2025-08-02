@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>ثبت‌نام کاربر جدید</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: sans-serif;
+            direction: rtl;
+            background-color: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            width: 420px;
+            text-align: center;
+        }
+
+        .container img.logo {
+            width: 160px;
+            margin-bottom: 15px;
+        }
+
+        .container h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 14px 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 15px;
+            color: #000;
+        }
+
+        button {
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 13px;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        a {
+            display: block;
+            margin-top: 12px;
+            font-size: 13px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .flash {
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .flash.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .flash.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="لوگو مرکز وکلا" class="logo">
+    <h2>ثبت‌نام کاربر جدید</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <input type="text" name="username" placeholder="نام کاربری" required>
+        <div class="input-group">
+            <input type="password" name="password" id="password" placeholder="رمز عبور" required>
+            <span class="toggle-password" onclick="togglePassword()">👁</span>
+        </div>
+        <button type="submit">ثبت‌نام</button>
+    </form>
+
+    <a href="{{ url_for('forgot_password') }}">رمز را فراموش کرده‌اید؟</a>
+    <a href="{{ url_for('login') }}">⬅ بازگشت به ورود</a>
+</div>
+
+<script>
+    function togglePassword() {
+        const field = document.getElementById("password");
+        field.type = field.type === "password" ? "text" : "password";
+    }
+</script>
+</body>
+</html>

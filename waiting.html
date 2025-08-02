@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>در حال جستجوی رقیب</title>
+    <style>
+        body {
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            background-color: #f1f6fb;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            width: 80px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: #004085;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .loader {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #007bff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-box {
+            background-color: #e3f2fd;
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="لوگو" class="logo">
+        <h2>در حال جستجوی رقیب آنلاین...</h2>
+        <div class="loader"></div>
+        <div class="status-box">
+            وضعیت: در حال یافتن بازیکن مناسب<br>
+            لطفاً این صفحه را ترک نکنید
+        </div>
+        <button class="btn-cancel" onclick="cancelMatch()">انصراف و بازگشت</button>
+    </div>
+
+    <script>
+        const interval = setInterval(() => {
+            fetch('/check_match_status')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'found_match' && data.redirect_url) {
+                        clearInterval(interval);
+                        window.location.href = data.redirect_url;
+                    }
+                })
+                .catch(err => console.error('Error:', err));
+        }, 3000);
+
+        function cancelMatch() {
+            clearInterval(interval);
+            // Optional: call a server endpoint to remove player from queue
+            window.location.href = '/dashboard';
+        }
+    </script>
+</body>
+</html>

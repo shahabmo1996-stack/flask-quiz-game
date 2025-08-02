@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>رقابت آنلاین</title>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            color: #0d47a1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 80px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .question-box {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .option-item {
+            background-color: #e3f2fd;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .option-label {
+            display: block;
+            padding: 15px;
+            cursor: pointer;
+        }
+
+        .option-item input[type="radio"] {
+            display: none;
+        }
+
+        .option-item input[type="radio"]:checked + .option-label {
+            background-color: #bbdefb;
+            border-color: #0d47a1;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            background-color: #0d47a1;
+            color: #ffffff;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #0b3a7a;
+        }
+
+        .score-box {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .status-message {
+            text-align: center;
+            padding: 20px;
+            font-size: 20px;
+            background-color: #fff3cd;
+            color: #856404;
+            border-radius: 8px;
+            border: 1px solid #ffeeba;
+        }
+
+        .round-info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='logo.png') }}" class="logo" alt="لوگو">
+            <h1>مسابقه آنلاین</h1>
+            <div class="round-info">
+                دور {{ room.current_round }} از {{ room.total_rounds }} | 
+                امتیاز شما: {{ room.scores[username] }}
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div style="margin-bottom: 20px;">
+                {% for category, message in messages %}
+                    <div style="padding: 10px; border-radius: 5px; {% if category == 'error' %}background-color: #f8d7da; color: #721c24;{% elif category == 'success' %}background-color: #d4edda; color: #155724;{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if answered_all_in_round %}
+            <div class="status-message">
+                <p>شما به تمام سوالات این دور پاسخ داده‌اید.</p>
+                <p>لطفاً منتظر بمانید تا حریف شما نیز پاسخ دهد.</p>
+            </div>
+        {% else %}
+            <div class="question-box">
+                <p>سوال {{ current_question_number }} از 3</p>
+                <div class="question-text">{{ question.qText }}</div>
+                <form method="post">
+                    <ul class="options-list">
+                        {% for i, option in enumerate(question.options) %}
+                            <li class="option-item">
+                                <input type="radio" id="option{{ i }}" name="answer" value="{{ i }}" required>
+                                <label for="option{{ i }}" class="option-label">{{ option }}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <button type="submit" class="submit-btn">ارسال پاسخ</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function checkRoundStatus() {
+            fetch("{{ url_for('check_round_status', room_id=room_id) }}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'next_round_my_turn' || 
+                        data.status === 'next_round_not_my_turn' || 
+                        data.status === 'match_finished' ||
+                        data.status === 'go_to_questions') {
+                        window.location.href = data.redirect_url;
+                    }
+                });
+        }
+        
+        {% if answered_all_in_round %}
+            setInterval(checkRoundStatus, 3000);
+        {% endif %}
+    </script>
+
+</body>
+</html>

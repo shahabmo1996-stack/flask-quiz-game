@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>منتظر انتخاب حریف</title>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .waiting-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+        .logo {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .loading-bar {
+            height: 6px;
+            background-color: #ecf0f1;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background-color: #3498db;
+            border-radius: 3px;
+            animation: loading 2s infinite;
+        }
+        @keyframes loading {
+            0% { width: 0%; margin-left: 0; }
+            50% { width: 100%; margin-left: 0; }
+            100% { width: 0%; margin-left: 100%; }
+        }
+        .status-message {
+            background-color: #e8f4fc;
+            color: #2980b9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .player-turn {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .round-info {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .btn-cancel {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-cancel:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="waiting-container">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo" alt="لوگوی مسابقه">
+        <h1>منتظر انتخاب موضوع توسط حریف</h1>
+        
+        <div class="round-info">
+            دور {{ room.current_round }} از {{ room.total_rounds }}
+        </div>
+        
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+        
+        <div class="status-message">
+            <p>در حال انتظار برای انتخاب موضوع توسط <span class="player-turn">{{ room.turn }}</span></p>
+            <p>لطفاً شکیبا باشید...</p>
+        </div>
+
+        <a href="{{ url_for('dashboard') }}" class="btn-cancel">انصراف از بازی</a>
+    </div>
+
+    <script>
+        function checkSelectionStatus() {
+            fetch("{{ url_for('check_round_status', room_id=room_id) }}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'go_to_questions' || data.status === 'match_finished' || data.status === 'my_turn_to_select') {
+                        window.location.href = data.redirect_url;
+                    }
+                })
+                .catch(error => console.error('خطا در بررسی وضعیت:', error));
+        }
+
+        setInterval(checkSelectionStatus, 2000);
+        document.addEventListener('DOMContentLoaded', checkSelectionStatus);
+    </script>
+</body>
+</html>

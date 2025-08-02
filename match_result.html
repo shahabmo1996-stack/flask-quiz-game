@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>نتیجه بازی</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #eef3f8;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+        }
+        .card {
+            max-width: 500px;
+            margin: 80px auto;
+            background: #fff;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .logo {
+            max-width: 100px;
+            margin-bottom: 20px;
+        }
+        .winner-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #1d3557;
+        }
+        .draw-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #6c757d;
+        }
+        .score-box {
+            background-color: #f1f9ff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        .player-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .player-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .btn-main {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-weight: bold;
+            margin-top: 25px;
+            border-radius: 10px;
+        }
+        .round-info {
+            font-size: 0.9rem;
+            color: #495057;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <img src="{{ url_for('static', filename='logo.png') }}" class="logo" alt="لوگو">
+    
+    {% if winner == 'مساوی' %}
+        <div class="draw-text">نتیجه بازی: مساوی</div>
+    {% else %}
+        <div class="winner-text">🏆 برنده: {{ winner }}</div>
+    {% endif %}
+
+    {% for player in players %}
+    <div class="score-box">
+        <div class="player-name">{{ player }}</div>
+        <div class="player-score">{{ scores[player] }}</div>
+        <div>امتیاز</div>
+    </div>
+    {% endfor %}
+
+    {% if rounds_played > 0 %}
+    <div class="round-info">
+        تعداد دورهای انجام شده: {{ rounds_played }} از {{ total_rounds }}
+    </div>
+    {% else %}
+    <div class="alert alert-warning mt-4">
+        بازی به دلیل عدم آمادگی حریف یا مشکل فنی به پایان رسید.
+    </div>
+    {% endif %}
+
+    <a href="{{ url_for('dashboard') }}" class="btn btn-main mt-3">بازگشت به صفحه اصلی</a>
+</div>
+
+</body>
+</html>

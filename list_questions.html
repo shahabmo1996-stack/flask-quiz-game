@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لیست سؤالات</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #fefefe;
+            direction: rtl;
+            margin: 40px;
+        }
+        h2 {
+            text-align: center;
+            color: #003366;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #0052cc;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .actions button {
+            margin: 0 5px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .edit-btn {
+            background-color: #ffaa00;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #cc0000;
+            color: white;
+        }
+        .back-button {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            background-color: #999;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<h2>📋 لیست سؤالات ثبت‌شده</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>ردیف</th>
+            <th>درس</th>
+            <th>سطح</th>
+            <th>متن سؤال</th>
+            <th>گزینه‌ها</th>
+            <th>صحیح</th>
+            <th>زمان (ثانیه)</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i, q in enumerate(questions) %}
+        <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ q.topic }}</td>
+            <td>{{ q.level }}</td>
+            <td>{{ q.question }}</td>
+            <td>
+                <ol>
+                    {% for opt in q.options %}
+                        <li>{{ opt }}</li>
+                    {% endfor %}
+                </ol>
+            </td>
+            <td>گزینه {{ q.correct|int + 1 }}</td>
+            <td>{{ q.time }}</td>
+            <td class="actions">
+                <form action="/admin/edit_question/{{ i }}" method="get" style="display:inline;">
+                    <button type="submit" class="edit-btn">ویرایش</button>
+                </form>
+                <form action="/admin/delete_question/{{ i }}" method="post" style="display:inline;">
+                    <button type="submit" class="delete-btn" onclick="return confirm('آیا از حذف این سؤال مطمئن هستید؟');">حذف</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a class="back-button" href="/admin">بازگشت به پنل</a>
+
+</body>
+</html>

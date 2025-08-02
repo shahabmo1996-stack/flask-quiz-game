@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ورود به مسابقه</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@latest/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-family: Vazirmatn, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #222;
+            margin-bottom: 25px;
+            font-size: 22px;
+        }
+
+        .btn {
+            display: block;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo" alt="لوگو">
+        <h2>مستند مسابقه کارآموز</h2>
+        <a href="{{ url_for('login') }}" class="btn">ورود به بازی</a>
+        <a href="{{ url_for('admin_panel') }}" class="btn">ورود مدیران</a>
+    </div>
+</body>
+</html>

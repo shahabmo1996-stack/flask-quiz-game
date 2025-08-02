@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>انتخاب دسته‌بندی و سطح</title>
+  <style>
+    body {
+      background-color: #f9f9f9;
+      font-family: Tahoma, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #0d47a1;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      width: 80px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      background-color: #ffffff;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      padding: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .lesson-name {
+      flex: 1.5;
+      padding: 0 10px;
+      text-align: right;
+      font-size: 16px;
+    }
+
+    .level-btn {
+      flex: 1;
+      margin: 0 6px;
+      background-color: #e3f2fd;
+      color: #0d47a1;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+
+    .level-btn:hover {
+      background-color: #bbdefb;
+    }
+
+    .level-btn[disabled] {
+      background-color: #ccc;
+      color: #777;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .start-btn {
+      margin-top: 40px;
+      width: 100%;
+      background-color: #0d47a1;
+      color: white;
+      padding: 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .start-btn:hover {
+      background-color: #08306b;
+    }
+
+    form {
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <img src="/static/logo.png" class="logo" alt="لوگو">
+      <h1>مستند مسابقه کارآموز</h1>
+    </div>
+
+    {% for topic in topics %}
+    <div class="row">
+      <div class="lesson-name">{{ topic }}</div>
+
+      {% if topic == 'سوال 10 امتیازی' %}
+        <form method="post">
+          <input type="hidden" name="topic" value="{{ topic }}">
+          <input type="hidden" name="level" value="10">
+          <button class="level-btn" type="submit" 
+                  {% if 'سوال 10 امتیازی-10' in used_combinations %}disabled{% endif %}>
+            سوال 10 امتیازی
+          </button>
+        </form>
+      {% else %}
+        {% for level in [3, 2, 1] %}
+          {% set key = topic ~ '-' ~ level %}
+          <form method="post">
+            <input type="hidden" name="topic" value="{{ topic }}">
+            <input type="hidden" name="level" value="{{ level }}">
+            <button class="level-btn" type="submit" 
+                    {% if key in used_combinations %}disabled{% endif %}>
+              سطح {{ level }}
+            </button>
+          </form>
+        {% endfor %}
+      {% endif %}
+    </div>
+    {% endfor %}
+
+  </div>
+
+</body>
+</html>

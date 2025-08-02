@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <img src="/static/logo.png" alt="Logo" style="height: 100px;">
+        <h2 class="mt-3">مستند مسابقه کارآموز</h2>
+    </div>
+
+    <form method="post" action="{{ url_for('select_question') }}">
+        {% for topic in topics %}
+        <div class="card mb-2">
+            <div class="card-body bg-info text-white topic-title" data-topic="{{ topic }}">
+                {{ topic }}
+            </div>
+            {% if topic != 'سؤال 10 امتیازی' %}
+            <div class="level-options d-none text-center mt-2 mb-2">
+                {% for level in levels %}
+                <button type="submit" name="level" value="{{ level }}" class="btn btn-success mx-1" onclick="document.getElementById('selected_topic').value='{{ topic }}'">{{ level }}</button>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <input type="hidden" name="topic" id="selected_topic">
+    </form>
+
+    <form method="get" action="{{ url_for('question10') }}">
+        <input type="hidden" name="topic" value="سؤال 10 امتیازی">
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-block mt-3">شروع رقابت</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const titles = document.querySelectorAll('.topic-title');
+    titles.forEach(title => {
+        title.addEventListener('click', () => {
+            const allLevels = document.querySelectorAll('.level-options');
+            allLevels.forEach(level => {
+                if (level !== title.nextElementSibling) {
+                    level.classList.add('d-none');
+                }
+            });
+            const levelBox = title.nextElementSibling;
+            if (levelBox && !title.textContent.includes('سؤال 10 امتیازی')) {
+                levelBox.classList.toggle('d-none');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

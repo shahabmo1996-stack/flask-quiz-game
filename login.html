@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title> مستند مسابقه کارآموز</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@latest/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-family: Vazirmatn, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 40px;
+            width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #222;
+            margin-bottom: 25px;
+            font-size: 22px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .flash {
+            color: #c00;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .register-link {
+            margin-top: 20px;
+            display: block;
+            font-size: 14px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo" alt="لوگو">
+        <h2> مستند مسابقه کارآموز</h2>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash">{{ messages[0] }}</div>
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <input type="text" name="username" placeholder="نام کاربری" required>
+            <input type="password" name="password" placeholder="رمز عبور" required>
+            <button type="submit">ورود</button>
+        </form>
+
+        <a class="register-link" href="{{ url_for('register') }}">ثبت‌نام نکرده‌اید؟</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>رقابت آنلاین</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@latest/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #fefefe;
+            direction: rtl;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .score-item {
+            font-weight: bold;
+            color: #003366;
+        }
+
+        .waiting-message, .answered-message {
+            background-color: #e2f0fb;
+            color: #0d47a1;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            margin-top: 30px;
+        }
+
+        .question-counter {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .option-box {
+            background-color: #f0f8ff;
+            border: 1px solid #d0e7f7;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .option-box:hover {
+            background-color: #e3f2fd;
+        }
+        
+        .option-box input[type="radio"] {
+            margin-left: 10px;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .info-box {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #0d47a1;
+        }
+        .timer-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .timer-progress {
+            height: 100%;
+            background-color: #ff9800;
+            border-radius: 5px;
+            transition: width 1s linear;
+        }
+        .highlight-correct {
+            background-color: #4CAF50; /* Green */
+        }
+        .highlight-wrong {
+            background-color: #f44336; /* Red */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="score-board">
+            {% for player, score in room.scores.items() %}
+                <div class="score-item">
+                    {{ player }}: {{ score }} امتیاز
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="info-box">
+            دور {{ room.current_round }} از {{ room.total_rounds }} |
+            درس: {{ room.current_topic }} |
+            سطح: {{ room.current_level }}
+        </div>
+        
+        {% if answered_all %}
+            <div class="answered-message">
+                <p>پاسخ شما ثبت شد.</p>
+                <p>منتظر هستم تا حریف شما پاسخ دهد...</p>
+            </div>
+        {% else %}
+            <div class="question-counter">
+                سوال {{ question_number }} از ۳
+            </div>
+            
+            <h2>{{ question.qText }}</h2>
+            
+            <div class="timer-bar">
+                <div class="timer-progress" id="timer-progress"></div>
+            </div>
+            
+            <form method="POST" id="quizForm">
+                <input type="hidden" name="room_id" value="{{ room_id }}">
+                <div id="options-container">
+                    {% for option in question.options %}
+                    <div class="option-box">
+                        <label>
+                            <input type="radio" name="answer" value="{{ loop.index0 }}" required>
+                            {{ option }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" id="submit-button">ثبت پاسخ</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if not answered_all %}
+                const timerProgress = document.getElementById('timer-progress');
+                const quizForm = document.getElementById('quizForm');
+                const optionsContainer = document.getElementById('options-container');
+
+                let timeLeft = {{ question.time }};
+                const totalTime = timeLeft;
+                const interval = setInterval(() => {
+                    timeLeft -= 1;
+                    const progress = (timeLeft / totalTime) * 100;
+                    timerProgress.style.width = `${progress}%`;
+                    if (timeLeft <= 0) {
+                        clearInterval(interval);
+                        // Submit form automatically on timeout
+                        quizForm.submit();
+                    }
+                }, 1000);
+            {% else %}
+                // Polling for next round status
+                function checkRoundStatus() {
+                    fetch("{{ url_for('check_round_status', room_id=room_id) }}")
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'round_complete' || data.status === 'match_finished') {
+                                window.location.href = data.redirect_url;
+                            }
+                        })
+                        .catch(error => console.error('Error checking round status:', error));
+                }
+                setInterval(checkRoundStatus, 3000);
+            {% endif %}
+        });
+    </script>
+</body>
+</html>

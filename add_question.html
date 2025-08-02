@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>افزودن سؤال جدید</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #fefefe;
+            margin: 40px;
+            direction: rtl;
+        }
+        h2 {
+            color: #003366;
+            text-align: center;
+        }
+        form {
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #0052cc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .back-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            background-color: #999;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<h2>افزودن سؤال جدید</h2>
+
+<form method="post">
+    <label for="topic">درس مورد نظر:</label>
+    <select name="topic" required>
+        <option value="">-- انتخاب درس --</option>
+        {% for topic in topics %}
+            <option value="{{ topic }}">{{ topic }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="level">سطح سؤال:</label>
+    <select name="level" required>
+        <option value="">-- انتخاب سطح --</option>
+        <option value="1">سطح ۱</option>
+        <option value="2">سطح ۲</option>
+        <option value="3">سطح ۳</option>
+    </select>
+
+    <label for="qText">متن سؤال:</label>
+    <textarea name="qText" rows="4" required></textarea>
+
+    <label for="option0">گزینه ۱:</label>
+    <input type="text" name="option0" required>
+
+    <label for="option1">گزینه ۲:</label>
+    <input type="text" name="option1" required>
+
+    <label for="option2">گزینه ۳:</label>
+    <input type="text" name="option2" required>
+
+    <label for="option3">گزینه ۴:</label>
+    <input type="text" name="option3" required>
+
+    <label for="correct">گزینه صحیح:</label>
+    <select name="correct" required>
+        <option value="">-- انتخاب گزینه صحیح --</option>
+        <option value="0">گزینه ۱</option>
+        <option value="1">گزینه ۲</option>
+        <option value="2">گزینه ۳</option>
+        <option value="3">گزینه ۴</option>
+    </select>
+
+    <label for="time">مدت زمان پاسخ (ثانیه):</label>
+    <input type="number" name="time" min="5" max="300" value="60" required>
+
+    <button type="submit">ذخیره سؤال</button>
+</form>
+
+<a class="back-button" href="/admin">بازگشت</a>
+
+</body>
+</html>

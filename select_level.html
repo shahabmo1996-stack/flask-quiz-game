@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>انتخاب سطح</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="لوگو" style="height: 60px; margin-bottom: 20px;">
+        <h2>🧩 انتخاب سطح برای درس: {{ topic }}</h2>
+
+        <div class="level-buttons">
+            <form method="get" action="{{ url_for('quiz') }}">
+                <input type="hidden" name="topic" value="{{ topic }}">
+                <input type="hidden" name="level" value="1">
+                <button class="level-button" type="submit">سطح ۱</button>
+            </form>
+            <form method="get" action="{{ url_for('quiz') }}">
+                <input type="hidden" name="topic" value="{{ topic }}">
+                <input type="hidden" name="level" value="2">
+                <button class="level-button" type="submit">سطح ۲</button>
+            </form>
+            <form method="get" action="{{ url_for('quiz') }}">
+                <input type="hidden" name="topic" value="{{ topic }}">
+                <input type="hidden" name="level" value="3">
+                <button class="level-button" type="submit">سطح ۳</button>
+            </form>
+        </div>
+
+        <br><br>
+        <a href="{{ url_for('select_topic') }}" style="color: white; text-decoration: underline;">⬅ بازگشت</a>
+    </div>
+</body>
+</html>

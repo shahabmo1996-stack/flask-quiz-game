@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>پنل مدیریت</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'IRANSans', sans-serif;
+            background-color: #fefefb;
+            direction: rtl;
+        }
+
+        nav {
+            background-color: #001f5b;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 30px;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            color: black;
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 999;
+            border-radius: 8px;
+        }
+
+        .dropdown-content a {
+            padding: 12px 16px;
+            display: block;
+            text-decoration: none;
+            color: #001f5b;
+            white-space: nowrap;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .dropdown:hover .dropdown-content,
+        .dropdown-content:hover {
+            display: block;
+        }
+
+        main {
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .logo {
+            width: 200px;
+        }
+
+        .btn {
+            background-color: #0052cc;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 18px;
+            border-radius: 10px;
+            margin-top: 30px;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            padding: 16px;
+            color: #333;
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <ul>
+        <li><a href="/" style="color: white; text-decoration: none;">خانه</a></li>
+        <li>روزشمار</li>
+        <li>قوانین</li>
+        <li>رتبه‌بندی</li>
+
+        <li class="dropdown">
+            مدیریت سوالات
+            <div class="dropdown-content">
+                <a href="/admin/add_question">➕ افزودن سؤال</a>
+                <a href="/admin/questions">📋 لیست سؤالات</a>
+                <a href="/admin/stats">📊 آمار کاربران</a>
+                <a href="/admin/performance">👁 عملکرد کاربران</a>
+            </div>
+        </li>
+    </ul>
+
+    <ul>
+        <li class="dropdown">
+            حساب من
+            <div class="dropdown-content">
+                <a href="/admin/change_password">🔒 تغییر رمز</a>
+                <a href="/logout">🚪 خروج</a>
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<main>
+    <img src="{{ url_for('static', filename='logo.png') }}" class="logo" alt="لوگو">
+    <br>
+    <button class="btn" onclick="window.location.href='/admin/questions'">مدیریت سؤالات</button>
+</main>
+
+<footer>
+    تماس با ما / درباره ما
+</footer>
+
+</body>
+</html>

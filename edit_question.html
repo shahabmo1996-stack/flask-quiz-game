@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ویرایش سؤال</title>
+    
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f8ff;
+            padding: 40px;
+        }
+        form {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        a.back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        <h2>ویرایش سؤال - {{ question.category }} (سطح {{ question.level }})</h2>
+        <label for="topic">درس مورد نظر:</label>
+        <select name="topic" required>
+            {% for topic in topics %}
+                <option value="{{ topic }}" {% if topic == question.category %}selected{% endif %}>{{ topic }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="level">سطح سؤال:</label>
+        <select name="level" required>
+            <option value="1" {% if question.level == 1 %}selected{% endif %}>سطح ۱</option>
+            <option value="2" {% if question.level == 2 %}selected{% endif %}>سطح ۲</option>
+            <option value="3" {% if question.level == 3 %}selected{% endif %}>سطح ۳</option>
+        </select>
+        
+        <label for="qText">متن سؤال:</label>
+        <textarea id="qText" name="qText" rows="4" required>{{ question.qText }}</textarea>
+
+        <label>گزینه‌ها:</label>
+        {% for i in range(4) %}
+            <input type="text" name="option{{ i }}" value="{{ question.options[i] }}" required>
+        {% endfor %}
+
+        <label for="correct">شماره گزینه صحیح (۰ تا ۳):</label>
+        <input type="number" id="correct" name="correct" min="0" max="3" value="{{ question.correct }}" required>
+        
+        <button type="submit">💾 ذخیره تغییرات</button>
+
+        <a href="{{ url_for('view_questions') }}" class="back-link">🔙 بازگشت به لیست سؤالات</a>
+    </form>
+</body>
+</html>

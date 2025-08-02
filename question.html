@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>رقابت آنلاین</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@latest/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #fefefe;
+            direction: rtl;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .score-item {
+            font-weight: bold;
+            color: #003366;
+        }
+
+        .waiting-message, .answered-message {
+            background-color: #e2f0fb;
+            color: #0d47a1;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            margin-top: 30px;
+        }
+
+        .question-counter {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .option-box {
+            background-color: #f0f8ff;
+            border: 1px solid #d0e7f7;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .option-box:hover {
+            background-color: #e3f2fd;
+        }
+        
+        .option-box input[type="radio"] {
+            margin-left: 10px;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .info-box {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #0d47a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="score-board">
+            {% for player, score in room.scores.items() %}
+                <div class="score-item">
+                    {{ player }}: {{ score }} امتیاز
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="info-box">
+            دور {{ room.current_round }} از {{ room.total_rounds }} |
+            درس: {{ room.questions[0].category }} |
+            سطح: {{ room.questions[0].level }}
+        </div>
+        
+        {% if show_waiting_message %}
+            <div class="answered-message">
+                <p>پاسخ شما ثبت شد.</p>
+                <p>منتظر هستم تا حریف شما ({{ room.players|rejectattr("equalto", my_username)|first }}) پاسخ دهد...</p>
+                <p>پس از پاسخ حریف، به صورت خودکار به سوال بعدی منتقل خواهید شد.</p>
+            </div>
+        {% else %}
+            <div class="question-counter">
+                سوال {{ current_question_number }} از {{ total_questions }}
+            </div>
+            
+            <h2>{{ question_text }}</h2>
+            
+            <form method="POST" id="quizForm">
+                {% for option in options %}
+                <div class="option-box">
+                    <label>
+                        <input type="radio" name="answer" value="{{ loop.index0 }}" required>
+                        {{ option }}
+                    </label>
+                </div>
+                {% endfor %}
+                <button type="submit">ثبت پاسخ</button>
+            </form>
+        {% endif %}
+    </div>
+
+    <script>
+        function checkQuizStatus() {
+            fetch("{{ url_for('check_quiz_status', room_id=room_id) }}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ready_to_proceed') {
+                        // After both players have answered, check if the round is finished or if there are more questions.
+                        fetch("{{ url_for('advance_quiz', room_id=room_id) }}")
+                            .then(response => {
+                                if (response.redirected) {
+                                    window.location.href = response.url;
+                                }
+                            });
+                    }
+                });
+        }
+        
+        {% if show_waiting_message %}
+        setInterval(checkQuizStatus, 3000);
+        {% endif %}
+    </script>
+</body>
+</html>
